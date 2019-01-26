@@ -1,5 +1,9 @@
 var express=require('express')
 var app=express()
+app.get('/',function(req,res)
+{
+  res.send('Hello World !')
+})
   // Example:
   // ```javascript
   // RPC.addHandler('Sum', function(args) {
@@ -13,8 +17,10 @@ var app=express()
   // ``` 
   exports.addHandler= function(path, callback, data) {
     
-    //todo register a route app.all 
-
+    if(path.replace('/',''))
+    path='/'+path
+    //todo register a express route app.post 
+    
 
   };
 
