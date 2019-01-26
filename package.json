@@ -1,0 +1,25 @@
+{
+  "name": "iot_blockchain_exps",
+  "version": "1.0.0",
+  "description": "test project",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js 5000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiveshnavin/iot_blockchain_exps.git"
+  },
+  "keywords": [
+    "iot"
+  ],
+  "author": "shivesh navin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shiveshnavin/iot_blockchain_exps/issues"
+  },
+  "homepage": "https://github.com/shiveshnavin/iot_blockchain_exps#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
