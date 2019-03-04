@@ -4,7 +4,10 @@ app.all('/',function(req,res)
 {
   res.send('Emulator Running on Port '+app.get('port'))
 })
-
+app.all('/ping',function(req,res)
+{
+  res.send('You are Connected to '+app.get('port'))
+})
 app.use (function(req, res, next) {
   var data='';
   req.setEncoding('utf8');

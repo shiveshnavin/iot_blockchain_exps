@@ -1,7 +1,4 @@
-var app = require('./index.js');
-app.get('/dd',(re,ree)=>{ree.send({s:'ss'})})
-
-  // Return value: numeric timer ID.
+ // Return value: numeric timer ID.
   //
   // Example:
   // ```javascript
@@ -13,12 +10,13 @@ app.get('/dd',(re,ree)=>{ree.send({s:'ss'})})
   // ```
   exports.set=function(delay,flag,callback){
 
-      if(flag)
+
+     if(flag!==1)
       {
-        setTimeout(callback,flag,delay)
+        return setTimeout(callback,flag,delay)
       }
       else{
-        setInterval(callback,delay)
+        return setInterval(callback,delay)
       }
   }
 
@@ -35,6 +33,6 @@ app.get('/dd',(re,ree)=>{ree.send({s:'ss'})})
   // Cancel previously installed timer.
   exports.del=function(timerid)
   {
-
+    clearInterval(timerid)
   }
  

@@ -1,0 +1,6 @@
+EVENT_GRP=10
+exports.STATUS_DISCONNECTED = EVENT_GRP + 1;
+exports.STATUS_CONNECTING   = EVENT_GRP + 2;
+exports.STATUS_CONNECTED    = EVENT_GRP + 3;
+exports.STATUS_GOT_IP       = EVENT_GRP + 4;
+exports.EVENT_GRP           = EVENT_GRP    ;

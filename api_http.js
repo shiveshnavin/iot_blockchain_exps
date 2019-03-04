@@ -18,9 +18,10 @@
       function(err,resp,body)
       {
 
-        opts.error(JSON.stringify(err))
         if(!err)
-        opts.success(JSON.stringify(body), JSON.stringify(resp))
+          opts.success(JSON.stringify(body), JSON.stringify(resp))
+        else
+          opts.error(JSON.stringify(err))
       }
     )
 
