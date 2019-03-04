@@ -1,5 +1,3 @@
- 
- 
  var request=require('request')
   // Example:
   // ```javascript
@@ -19,9 +17,10 @@
       {json:opts.data},
       function(err,resp,body)
       {
-        opts.error(err)
-        opts.success(body)
-        console.log("RESPONSE IS ",body)
+
+        opts.error(JSON.stringify(err))
+        if(!err)
+        opts.success(JSON.stringify(body), JSON.stringify(resp))
       }
     )
 
