@@ -22,3 +22,8 @@ exports.read=function(pin,val)
 {
     return pins[pin];
 }
+
+exports.set_mode=function(pin,mode)
+{
+    pins[pin]=false;
+}

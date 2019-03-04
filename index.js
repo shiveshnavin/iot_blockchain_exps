@@ -3,13 +3,26 @@ function load(path)
 { 
     return require('./'+path)
 }
+function gc()
+{
+
+}
 let print=function()
 { 
+   
+     
     for(let i=0;i<arguments.length;i++)
-       {
+       { 
+        try{
         process.stdout.write(arguments[i]);
+        }
+        catch(err)
+        {
+            console.log(arguments[i])
+        }
        } 
        process.stdout.write('\n'); 
+    
 }
 module.exports = app
 
@@ -21,22 +34,23 @@ var Cfg=load('api_config.js');
 var ffi=load('api_ffi.js');
 var Event=load('api_events.js');
 var Net=load('api_net.js');
+var File=load('api_file.js');
 var GPIO=load('api_gpio.js');
+var Timer=load('api_timer.js');
 var app=RPC.app
 /***************START HERE******************/
 
 
  
 
-var port=process.argv.splice(2)[0] 
-port=port?port : '5000';
-app.set('port',port);
 
+let DEVICE_NO=Cfg.DEVICE_NO; ;//DEVICE_NAME.slice(7, 8); 
+if(DEVICE_NO===undefined)
+    DEVICE_NO="0";
+let DEVICE_NAME="iotain_"+DEVICE_NO;
 
+let port=JSON.parse(Cfg.BASE_PORT)+JSON.parse(DEVICE_NO);
 
-
-let DEVICE_NAME=Cfg.get("device.id");  
-let DEVICE_NO=DEVICE_NAME.slice(7, 8); 
 if(DEVICE_NAME==="iotain_0")
 {
   DEVICE_NO="0";
@@ -70,16 +84,16 @@ let  AP={
   ssid:DEVICE_NAME,pass:"password",enable:true,ip:"192.168."+DEVICE_NO+".1"
   ,gw:"192.168."+DEVICE_NO+".1",dhcp_start:"192.168."+DEVICE_NO+".2",dhcp_end:"192.168."+DEVICE_NO+".100"};
  
-print(DEVICE_NAME,'===',DEVICE_NAME,"===");
-print(DEVICE_NAME,' AP '+JSON.stringify(AP));
-print(DEVICE_NAME,"WIFI ",Cfg.get("wifi.sta.ssid")," : ",Cfg.get("wifi.sta.pass"));
-print(DEVICE_NAME,'===',Cfg.get("device.id"),"===");
+print(DEVICE_NAME,"->",'===',DEVICE_NAME,"===");
+print(DEVICE_NAME,"->",' AP '+JSON.stringify(AP));
+print(DEVICE_NAME,"->","WIFI ",Cfg.get("wifi.sta.ssid")," : ",Cfg.get("wifi.sta.pass"));
+print(DEVICE_NAME,"->",'===',Cfg.get("device.id"),"===");
 
 let wifi_setup=ffi('void change_wifi()');
 let iotains=["iotain_0","iotain_1","iotain_2","iotain_3","iotain_4"];
 if(s.status==="TO_COMMIT")
 {
-  print(DEVICE_NAME,"Updating Device Config");
+  print(DEVICE_NAME,"->","Updating Device Config");
   Cfg.set({wifi:{ap:AP}});
   Cfg.set({device:{id:DEVICE_NAME}}); 
   if(iotains[0]===DEVICE_NAME)
@@ -103,8 +117,6 @@ let blink_once=ffi('void blink_once(int,int)');
 let start_blink=ffi('void start_blink()'); 
 let stop_blink=ffi('void stop_blink()');   
 let on_delay=ffi('void on_delay(int,int)');   
-let start_blink=ffi('void start_blink()'); 
-let stop_blink=ffi('void stop_blink()');   
 
 let status={ap:AP,sta_ip:"0.0.0.0",sta_ssid:Cfg.get("wifi.sta.ssid"),clients:[]}; 
 let get_status=function()
@@ -119,15 +131,18 @@ let get_status=function()
 let reg_timer=-1;
 let register=function(host,sta_ip)
 { 
-  http_call(host+"/rpc/register",{ssid: DEVICE_NAME, ip: sta_ip}); 
+  http_call("http://"+host+"/rpc/register",{ssid: DEVICE_NAME, ip: sta_ip}); 
 };
+
+let myIp="127.0.0.1:"+(Cfg.BASE_PORT+JSON.parse(Cfg.DEVICE_NO))
 let get_info=function()
 {
   RPC.call(RPC.LOCAL, 'Sys.GetInfo', null, function (resp, ud) { 
-    status.sta_ip = resp.wifi.sta_ip; 
-    status.sta_ssid="iotain_"+status.sta_ip.slice(8, 9) ; 
-    myHostIp="192.168."+status.sta_ip.slice(8, 9)+".1"; 
-    register( "192.168."+status.sta_ip.slice(8, 9)+".1", status.sta_ip ); 
+    
+    status.sta_ip =  myIp; 
+    status.sta_ssid="iotain_"+resp.hostNo ; 
+    myHostIp=resp.hostIp; 
+    register( myHostIp, status.sta_ip ); 
   }, null); 
 };
 gc(true);
@@ -136,15 +151,16 @@ let myHostIp="192.168."+DEVICE_NO+".1";
 let timer_count=0;
 let http_call=function(url,body)
 {
-   print(DEVICE_NAME,"HTTP CALL ",url,JSON.stringify(body));
+   print(DEVICE_NAME,"->","HTTP CALL ",url,JSON.stringify(body));
 
    HTTP.query({
     url: url,
     headers: { 'Content-Type': 'application/json' },   
     data:body,
 		success: function(body, full_http_msg) {
-      print(DEVICE_NAME,body);       
-		}   
+      print(DEVICE_NAME,"->",body);       
+        },
+        error:function(err){print(err)}   
 	}); 
     
 };
@@ -183,7 +199,7 @@ let perform_job=function(job)
     }
 
     on_delay(led2,4000);
-    print(DEVICE_NAME,"Performing ",job.res_name);
+    print(DEVICE_NAME,"->","Performing ",job.res_name);
     return res;
     
 };
@@ -216,11 +232,11 @@ let fwd_request=function(req)
     let _req={
         req_id:req.req_id,
         force_fwd:req.force_fwd,
-        src_ip:"192.168."+DEVICE_NO+".1",
+        src_ip:myIp,
         status:req.status,
         job:req.job
     }; 
-    print(DEVICE_NAME,"FWD RQ FROM:",req.src_ip," JOB:",req.job.res_name," TO:", JSON.stringify(clients)," And ",myHostIp); 
+    print(DEVICE_NAME,"->","FWD RQ FROM:",req.src_ip," JOB:",req.job.res_name," TO:", JSON.stringify(clients)," And ",myHostIp); 
     for(let i=0;i<clients.length;i++)
     { 
         http_call("http://"+clients[i].ip+"/rpc/on_request",_req);
@@ -233,6 +249,7 @@ let fwd_request=function(req)
 
 /*********DEVICE SPECIFIC */
 
+/*
 load('api_esp32_touchpad.js'); 
 let ts = TouchPad.GPIO[14];
 let lastTouch=0;
@@ -283,7 +300,7 @@ TouchPad.isrRegister(function(st) {
 if(DEVICE_NAME==="iotain_0")
   TouchPad.intrEnable();
  
- 
+ */
 
 
 
@@ -311,7 +328,7 @@ RPC.addHandler('on_callback',function(req){
 
   on_delay(led2,4000);
   Sys.usleep(1000);
-  print(DEVICE_NAME,"callback on "+DEVICE_NAME, " ID ",req.req_id); 
+  print(DEVICE_NAME,"->","callback on "+DEVICE_NAME, " ID ",req.req_id); 
   gc(true);
   let req_hist=find_request(req.req_id);
   if(req_hist===undefined)
@@ -320,7 +337,7 @@ RPC.addHandler('on_callback',function(req){
   }
   
   let rq=update_request(req); 
-  print(DEVICE_NAME,"FWD RES TO:",rq.src_ip," JOB:",rq.job.res_name);
+  print(DEVICE_NAME,"->","FWD RES TO:",rq.src_ip," JOB:",rq.job.res_name);
   rq.status=req.status;
   http_call("http://"+rq.src_ip+"/rpc/on_callback",rq); 
 
@@ -329,7 +346,7 @@ RPC.addHandler('on_callback',function(req){
 GPIO.write(led2,0);
 RPC.addHandler('on_request',function(req){
  
-  print(DEVICE_NAME,"request on "+DEVICE_NAME, " ID ",req.req_id);gc(true); 
+  print(DEVICE_NAME,"->","request on "+DEVICE_NAME, " ID ",req.req_id);gc(true); 
   let res=find_resource(req.job.res_id);
   if(res===undefined)
   {
@@ -365,14 +382,27 @@ RPC.addHandler('on_request',function(req){
 let index=1+JSON.parse(DEVICE_NO);
 start_blink();
 let diconnect_count=0;
+let prev_event=-1;
 Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
+    /*if(ev===Net.STATUS_CONNECTED && prev_event===Net.STATUS_CONNECTED)
+    {
+        return;
+    }
+
+    if(ev===Net.STATUS_GOT_IP && prev_event===Net.STATUS_GOT_IP)
+    {
+        return;
+    }
+*/
+
+    prev_event=ev;
   let evs = '???';
   if (ev === Net.STATUS_DISCONNECTED) {
     start_blink();
     evs = 'DISCONNECTED';
     status.sta_ip="0.0.0.0";
     diconnect_count++; 
-    print(DEVICE_NAME,"Still Disconnected ",diconnect_count); 
+    print(DEVICE_NAME,"->","Still Disconnected ",diconnect_count); 
     if(diconnect_count>=2  )
     {
       diconnect_count=0; 
@@ -382,7 +412,7 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
       }
       if(index===iotains.length)
         index=0;
-      print(DEVICE_NAME,"Connecting to ",iotains[index]);
+      print(DEVICE_NAME,"->","Connecting to ",iotains[index]);
       Cfg.set({wifi:{sta:{ssid:iotains[index++],pass:"password"}}});
       wifi_setup(); 
     } 
@@ -415,7 +445,8 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
     },null);
      
   }
-  print(DEVICE_NAME,'== Net event:', ev, evs);
+  
+  print(DEVICE_NAME,"->",'== Net event:', Net.get(ev), '');
   evs=undefined;
   gc(true);
 }, null);

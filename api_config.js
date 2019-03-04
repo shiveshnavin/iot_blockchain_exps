@@ -11,7 +11,11 @@ exports.set=function(cfn)
 exports.get=function(loc)
 {
     var val = _.get(cfg, loc);
-    return val;
+    if(val===undefined)
+    val=""
+    return JSON.stringify(val);
 }
 
 exports.BASE_PORT=5000;
+exports.MAX_NODES=5;
+exports.DEVICE_NO=0;

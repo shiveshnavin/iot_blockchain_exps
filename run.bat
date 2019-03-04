@@ -1,0 +1,5 @@
+start cmd /k "node index.js 0"
+start cmd /k "node index.js 1"
+start cmd /k "node index.js 2"
+start cmd /k "node index.js 3"
+start cmd /k "node index.js 4"
