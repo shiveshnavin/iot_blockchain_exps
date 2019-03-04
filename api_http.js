@@ -1,5 +1,6 @@
  
  
+ var request=require('request')
   // Example:
   // ```javascript
   // HTTP.query({
@@ -11,6 +12,18 @@
   // });
   // ```
   exports.query=function(opts) {
-     
+    
+    var req=request.post(
+
+      opts.url,
+      {json:opts.data},
+      function(err,resp,body)
+      {
+        opts.error(err)
+        opts.success(body)
+        console.log("RESPONSE IS ",body)
+      }
+    )
+
   }
  

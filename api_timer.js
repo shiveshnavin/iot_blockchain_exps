@@ -13,6 +13,13 @@ app.get('/dd',(re,ree)=>{ree.send({s:'ss'})})
   // ```
   exports.set=function(delay,flag,callback){
 
+      if(flag)
+      {
+        setTimeout(callback,flag,delay)
+      }
+      else{
+        setInterval(callback,delay)
+      }
   }
 
   exports.REPEAT= 1;
@@ -21,7 +28,7 @@ app.get('/dd',(re,ree)=>{ree.send({s:'ss'})})
   // Return current time as double value 
   exports.now=function()
   {
-
+    return new Date();
   }
 
   // ## **`Timer.del(id)`**
