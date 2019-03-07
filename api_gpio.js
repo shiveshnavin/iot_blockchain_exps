@@ -1,113 +1,114 @@
 var sio=require('socket.io')
 var http=require('http')
-var fs=require('fs')
-var pins=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]; 
-const connections = [];
-var write_pin=function (pin,val)
-{
-    read_pins();
-    pins[pin]=val
-    write_pins();
-}
-var read_pins=function ()
-{
-    
-    pins=JSON.parse(fs.readFileSync('./pins.json'))
-    return pins 
-}
-var write_pins=function ()
-{ 
-    fs.writeFileSync('./pins.json',JSON.stringify(pins))
-    emitPin()
-}
-var read_pin=function (pin)
-{
-    
-    pins=read_pins()
-    return pins[pin]
-}
-
-
+var fs=require('fs') 
  
-exports.pins=pins;
-exports.initGPIO=function(express_app)
-{
-    app=express_app 
-    var server=http.createServer(app)
-    io=sio(server)
-
-
-    io.sockets.on('connection',(socket) => {
-        connections.push(socket);
-        console.log(' %s sockets is connected', connections.length);
-    
-        socket.on('input',(input)=>{
-            console.log( (input))
-            try{
-
-                var inp=JSON.parse(JSON.stringify(input))
-                if(typeof inp.pin===Number)
-                {
-                     write_pin(inp.pin,inp.val)
-                }
-                console.log(read_pins())
-                emitPin()
-            }catch(e)
-            {
-                console.log(e)
-            }
-        })
-
-        socket.on('disconnect', () => {
-        connections.splice(connections.indexOf(socket), 1);
-        });
-    });
 
 
 
-    return server
-
-}
-
-exports.MODE_INPUT=0;
-exports.MODE_OUTPUT=1;
-
-exports.toggle=function(pin)
-{ 
-    read_pins()
-    if(pins[pin]===undefined)
+var GPIO=module.exports={
+    pins:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    MODE_INPUT:0,
+    MODE_OUTPUT:1,
+    connections:[],
+    initGPIO:function(express_app)
     {
-        pins[pin]=0;
+        app=express_app 
+        var server=http.createServer(app)
+        io=sio(server)
+    
+    
+        io.sockets.on('connection',(socket) => {
+            GPIO.connections.push(socket);
+            console.log(' %s sockets is connected', GPIO.connections.length);
+        GPIO.emitPin()
+            socket.on('input',(input)=>{
+               // console.log( (input))
+                try{
+     
+                    var inp= input.split('-') 
+                    GPIO.write_pin(inp[0],inp[1])
+                    
+                    console.log(GPIO.read_pins())
+                    GPIO.emitPin()
+                }catch(e)
+                {
+                   // console.log(e)
+                }
+            })
+    
+            socket.on('disconnect', () => {
+                GPIO.connections.splice(GPIO.connections.indexOf(socket), 1);
+            });
+        });
+    
+    
+    
+        return server
+    
+    } ,
+    toggle:function(pin)
+    { 
+        GPIO.read_pins()
+        if(GPIO.pins[pin]===undefined)
+        {
+            GPIO.pins[pin]=0;
+        }
+        var val=GPIO.pins[pin]
+        GPIO.pins[pin]=(val===0?1:0);
+        GPIO.write_pins() 
+    },
+    emitPin:function()
+    {
+         var i=0
+        GPIO.connections.forEach(socket => {
+            //console.log("Emit to socK ",i++)
+            socket.emit('output',GPIO.read_pins())
+        });
+    },
+    write:function(pin,val)
+    {
+        GPIO.write_pin(pin,val) 
+        //console.log('Emitting ',pin,' to ',val)  
+        GPIO.emitPin()
+      
+    },
+    read:function(pin)
+    {
+        GPIO.read_pin()
+        return GPIO.pins[pin];
+    },
+    set_mode:function(pin,mode)
+    {
+        GPIO.read_pin(pin)
+        GPIO.pins[pin]=0;
+        GPIO.write_pins();
     }
-    var val=pins[pin]
-    pins[pin]=(val===0?1:0);
-    write_pins() 
-}
+    ,write_pin:function (pin,val)
+    {
+        GPIO.read_pins();
+        //console.log("St pin ",pin,' to ',val)
+        GPIO.pins[pin]=val
+        GPIO.write_pins();
+    }
+    ,read_pins:function ()
+    {
+        
+        //GPIO.pins=JSON.parse(fs.readFileSync('./pins.json'))
+        return GPIO.pins 
+    },
+    write_pins:function ()
+    { 
+        //fs.writeFileSync('./pins.json',JSON.stringify(pins))
+        GPIO.emitPin()
+    },
+    read_pin:function (pin)
+    {
+        
+        GPIO.pins=GPIO.read_pins()
+        return GPIO.pins[pin]
+    }
 
-var emitPin=function()
-{
-    connections.forEach(socket => {
-       
-        socket.emit('output',read_pins())
-    });
-}
-exports.write=function(pin,val)
-{
-    write_pin(pin,val) 
-    console.log('Emitting ',pin,' to ',val)  
-    emitPin()
-  
-}
 
-exports.read=function(pin)
-{
-    read_pin()
-    return pins[pin];
-}
-
-exports.set_mode=function(pin,mode)
-{
-    read_pin(pin)
-    pins[pin]=0;
-    write_pins();
-}
+} 
+ 
+ 

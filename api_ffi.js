@@ -164,7 +164,7 @@ module.exports=(fun)=>{
     }
     else if(fun==="gpio")
     {
-        console.log("retr gpio")
+        //console.log("retr gpio")
         return GPIO;
     }
 

@@ -5,14 +5,13 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Node.js Socket.io Chat Application</title>
+   <title id="device_t"></title>
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
    <div class="container">
-      <h1 class="jumbotron">
-         Node js Socket io Chat Application
-      </h1>
+      <h1 id="device" class="jumbotron">
+       </h1>
       <div class="row" style="margin-top: 70px;">
          <div class="col-md-4"></div>
          <div class="col-md-6">
@@ -24,8 +23,10 @@
             </div>
             <form id="myForm">
                <div class="form-group">
-                    <input rows="2" id="pin" cols="2" class="form-control"/> 
-                  <input rows="2" id="val" cols="2" class="form-control"/> 
+                   <label for="pin">Pin</label>
+                    <input rows="2" id="pin" cols="2"  type="number"  min="0" max="16"   class="form-control"/> 
+                    <label for="val">Value (1 or 0)</label>
+                  <input rows="2" id="val" cols="2" type="number"  min="0" max="1"   class="form-control"/> 
                </div>
                <div class="form-group">
                   <button type="submit" class="btn btn-success">Send</button>
@@ -48,6 +49,12 @@
        var pin = jQuery('#pin');
        var val = jQuery('#val');
        var chatArea = jQuery('#chatArea');
+       var device_t=jQuery("#device_t")
+       var device=jQuery("#device")
+        const url = new URL(window.location.href);
+
+        device.text("IO Board : iotain_"+(url.port-5000))
+        device_t.text("iotain_"+(url.port-5000))
 
         socket.on('connect', function(){
             socket.emit('setUser','GPIO');
@@ -56,7 +63,9 @@
 
        form.submit(function(e) {
           e.preventDefault();
-          socket.emit('input', (JSON.stringify({pin:pin.val(),val:txt.val()})));
+          socket.emit('input', ''+pin.val()+'-'+val.val());
+
+         //    socket.emit('input', JSON.stringify(JSON.stringify({pin:pin.val(),val:val.val()})));
           console.log('sending input ',{pin:pin.val(),val:val.val()})
           val.val('');
        });
