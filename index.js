@@ -9,7 +9,7 @@ function gc()
 }
 let print=function()
 { 
-   
+  return
      
     for(let i=0;i<arguments.length;i++)
        { 
@@ -23,8 +23,7 @@ let print=function()
        } 
        process.stdout.write('\n'); 
     
-}
-module.exports = app
+} 
 
 
 var Sys=load('api_sys.js');
@@ -35,9 +34,9 @@ var ffi=load('api_ffi.js');
 var Event=load('api_events.js');
 var Net=load('api_net.js');
 var File=load('api_file.js');
-var GPIO=load('api_gpio.js');
-var Timer=load('api_timer.js');
-var app=RPC.app
+var GPIO=ffi('gpio')
+var Timer=load('api_timer.js'); 
+ 
 /***************START HERE******************/
 
 
@@ -49,7 +48,6 @@ if(DEVICE_NO===undefined)
     DEVICE_NO="0";
 let DEVICE_NAME="iotain_"+DEVICE_NO;
 
-let port=JSON.parse(Cfg.BASE_PORT)+JSON.parse(DEVICE_NO);
 
 if(DEVICE_NAME==="iotain_0")
 {
@@ -327,7 +325,7 @@ RPC.addHandler('register',function(args)
 RPC.addHandler('on_callback',function(req){
 
   on_delay(led2,4000);
-  Sys.usleep(1000);
+  Sys.usleep(3000);
   print(DEVICE_NAME,"->","callback on "+DEVICE_NAME, " ID ",req.req_id); 
   gc(true);
   let req_hist=find_request(req.req_id);
@@ -500,5 +498,4 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
 
 
 
-
-app.listen(port, () => console.log(`Node app listening on port ${port}!`))
+ 

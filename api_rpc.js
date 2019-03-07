@@ -1,6 +1,13 @@
 var express=require('express')
+var path=require('path') 
+var GPIO=require('./api_gpio.js');
 var app=express()
 var ffi=require('./api_ffi.js')
+var Cfg=require('./api_config.js')
+
+let port=JSON.parse(Cfg.BASE_PORT)+JSON.parse(Cfg.DEVICE_NO);
+app.set('port',port)
+
 app.all('/',function(req,res)
 {
   res.send('Emulator Running on Port '+app.get('port'))
@@ -21,7 +28,11 @@ app.use (function(req, res, next) {
       next();
   });
 });
-
+app.use(express.static(path.join(__dirname,'public')))
+var server=GPIO.initGPIO(app)
+ 
+server.listen(port);
+console.log('Server is running at '+port);
 
   // Example:
   // ```javascript

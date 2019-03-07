@@ -3,17 +3,19 @@ var Cfg=require('./api_config.js');
 var Timer=require('./api_timer.js');
 var HTTP=require('./api_http.js');
 var Events=require('./api_events.js')
+var Sys=require('./api_sys.js')
 var Net=require('./api_net.js')
 var RPC=require('./api_rpc.js')
+var GPIO=require('./api_gpio.js')
+var Timer=require('./api_timer.js')
 
 var curIp="127.0.0.1",curPort="5001";
-let DEVICE_NO=JSON.parse(process.argv.splice(2)[0])
+var DEVICE_NO=JSON.parse(process.argv.splice(2)[0])
 Cfg.DEVICE_NO=DEVICE_NO;
 
 if(DEVICE_NO>=Cfg.MAX_NODES)
     DEVICE_NO=-1;
 curPort=DEVICE_NO+1;
-
 var wasSuc=0;
 var send_ping=function(url)
 {
@@ -50,9 +52,12 @@ var connect=function(ip,port)
 {
     curIp=ip;
     curPort=JSON.parse(Cfg.BASE_PORT)+JSON.parse(port);
-    console.log("Connecting to  IP",curIp,curPort);
+   // console.log("Connecting to  IP",curIp,curPort);
 }
 
+var blink_timer=-1;
+var blink_pin=4;
+var DELAY=100;
 module.exports=(fun)=>{
 
     if(fun==="void wifi_setup()")
@@ -70,39 +75,56 @@ module.exports=(fun)=>{
         }
     else if(fun==="void blink_once(int,int)")
     {
-        return function(delay,pin)
+        return function(pin,delay)
         {
-            
+         
+            GPIO.toggle(pin)
+            Sys.usleep(delay)
+            GPIO.toggle(pin)
+            Sys.usleep(delay)
+            GPIO.toggle(pin)
+            Sys.usleep(delay)
+            GPIO.toggle(pin)
+            Sys.usleep(delay)
+
+ 
         }
     }
     else if(fun==="void start_blink()")
     {
         return function()
         {
-            
+            if(blink_timer!==-1)
+            {
+                Timer.del(blink_timer);
+            }
+            blink_timer=Timer.set(DELAY,Timer.REPEAT,function()
+            { 
+                GPIO.toggle(blink_pin)
+            })
         }
     }
     else if(fun==="void stop_blink()")
     {
         return function()
         {
-            
+            if(blink_timer!==-1)
+            {
+                Timer.del(blink_timer);
+            }
         }
     }
     else if(fun==="void on_delay(int,int)")
     {
-        return function(p1,p2)
+        return function(pin,delayedOff)
         {
-            
+            GPIO.write(pin,1)
+            Timer.set(delayedOff,0,function()
+            {
+                GPIO.write(pin,0)
+            })
         }
-    }
-    else if(fun==="void on_delay()")
-    {
-        return function()
-        {
-            
-        }
-    }
+    } 
     else if(fun==="void change_wifi()")
     {
         return function()
@@ -125,9 +147,10 @@ module.exports=(fun)=>{
     }
     else if(fun==="void init_led(int,int)")
     {
-        return function(pin,mode)
+        return function(pin,delay)
         {
-            
+            blink_pin=pin;
+            DELAY=delay
         }
     }
     else if(fun==="void getInfo()")
@@ -138,6 +161,11 @@ module.exports=(fun)=>{
                 hostIp:"127.0.0.1:"+curPort
             };
         };
+    }
+    else if(fun==="gpio")
+    {
+        console.log("retr gpio")
+        return GPIO;
     }
 
 
