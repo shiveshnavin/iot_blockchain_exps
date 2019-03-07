@@ -10,7 +10,8 @@ app.set('port',port)
 
 app.all('/',function(req,res)
 {
-  res.send('Emulator Running on Port '+app.get('port'))
+  res.sendFile(__dirname+'/public/index.html')
+  //res.send('Emulator Running on Port '+app.get('port'))
 })
 app.all('/ping',function(req,res)
 {
@@ -29,10 +30,15 @@ app.use (function(req, res, next) {
   });
 });
 app.use(express.static(path.join(__dirname,'public')))
-var server=GPIO.initGPIO(app)
+
+setTimeout(function(){
+
+  var server=GPIO.initGPIO(app)
  
-server.listen(port);
-console.log('Server is running at '+port);
+  server.listen(port);
+  console.log('Server is running at '+port);
+  
+},100)
 
   // Example:
   // ```javascript

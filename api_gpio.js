@@ -1,10 +1,7 @@
 var sio=require('socket.io')
 var http=require('http')
 var fs=require('fs') 
- 
-
-
-
+  
 var GPIO=module.exports={
     pins:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     MODE_INPUT:0,
@@ -22,11 +19,11 @@ var GPIO=module.exports={
             console.log(' %s sockets is connected', GPIO.connections.length);
         GPIO.emitPin()
             socket.on('input',(input)=>{
-               // console.log( (input))
+              console.log( (input))
                 try{
      
                     var inp= input.split('-') 
-                    GPIO.write_pin(inp[0],inp[1])
+                    GPIO.write_pin(JSON.parse(inp[0]),JSON.parse(inp[1]))
                     
                     console.log(GPIO.read_pins())
                     GPIO.emitPin()
@@ -62,7 +59,7 @@ var GPIO=module.exports={
          var i=0
         GPIO.connections.forEach(socket => {
             //console.log("Emit to socK ",i++)
-            socket.emit('output',GPIO.read_pins())
+            socket.emit('output',JSON.stringify(GPIO.read_pins()))
         });
     },
     write:function(pin,val)

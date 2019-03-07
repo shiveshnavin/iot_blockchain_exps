@@ -9,11 +9,12 @@ function gc()
 }
 let print=function()
 { 
-  return
-     
+  
+    let str='';
     for(let i=0;i<arguments.length;i++)
        { 
         try{
+          str+=' '+arguments[i];
         process.stdout.write(arguments[i]);
         }
         catch(err)
@@ -22,6 +23,10 @@ let print=function()
         }
        } 
        process.stdout.write('\n'); 
+       if(UART!==undefined)
+       {
+        UART.write(str)
+       }
     
 } 
 
@@ -36,6 +41,7 @@ var Net=load('api_net.js');
 var File=load('api_file.js');
 var GPIO=ffi('gpio')
 var Timer=load('api_timer.js'); 
+var UART=load('api_uart.js'); 
  
 /***************START HERE******************/
 
@@ -109,7 +115,7 @@ AP=undefined;
 gc(true); 
 
 let init_led=ffi('void init_led(int,int)'); 
-init_led(led,100);
+init_led(led,150);
 
 let blink_once=ffi('void blink_once(int,int)'); 
 let start_blink=ffi('void start_blink()'); 
@@ -404,12 +410,12 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
     if(diconnect_count>=2  )
     {
       diconnect_count=0; 
+      if(index===iotains.length)
+        index=0;
       if(iotains[index]===DEVICE_NAME || iotains[index]===Cfg.get("wifi.sta.ssid"))
       {
         index++; 
       }
-      if(index===iotains.length)
-        index=0;
       print(DEVICE_NAME,"->","Connecting to ",iotains[index]);
       Cfg.set({wifi:{sta:{ssid:iotains[index++],pass:"password"}}});
       wifi_setup(); 
