@@ -18,7 +18,7 @@ To run on Linux
 
 To make a request 
 
-run ota_server and send postman request 
+run ota_server and send postman or from GUI request 
 ```code
 
 http://127.0.0.1:5001/rpc/on_request
@@ -33,3 +33,7 @@ http://127.0.0.1:5001/rpc/on_request
 }
 
 ```
+
+
+![Alt text](public/nodes.png "Main Screen")
+![Alt text](public/emu_gui.png "Main Screen")  
