@@ -19,9 +19,18 @@
     <div class="container">
 
             <h1 id="device" class="jumbotron"> </h1>
-            <p>Resize the browser window to see the responsive effect (the columns will stack on top of each other instead of floating next to each other, when the screen is less than 600px wide).</p>
+            <p>Emulator GUI for iotain project . Limited ESP32/8266 Mongoos OS functionality ported on Node JS. If Requests are not going through due to CORS ACCESS DENIED try installing <a href="https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi/">THIS</a></a></p>
             
             <div class="row">
+
+ 
+                <div class="column" >
+                    <h2>Serial Output</h2>
+                    <p id="serial_op"><--  SERIAL BEGIN  --></p>
+                    <button id="clear" class="button2" name="clear">CLEAR</button><br><br>
+                  </div>
+
+
               <div class="column"  >
                 <h2>GPIO</h2>
                
@@ -38,21 +47,18 @@
               </div>
 
 
-
-
-
-
-
-              <div class="column" >
-                <h2>Serial Output</h2>
-                <p id="serial_op"><--  SERIAL BEGIN  --></p>
-                <button id="clear" class="button2" name="clear">CLEAR</button><br><br>
-              </div>
               <div class="column"  >
                 <h2>Request</h2>
                 
-                <textarea name="req" id="req" placeholder="raw JSON body">{ }</textarea>
-                <input type="text" id="url" name="url" placeholder="URL" value="/rpc/status">
+                <textarea name="req" id="req" placeholder="raw JSON body">{
+	
+                  "req_id":"123",
+                  "src_ip":"127.0.0.1:8080",
+                  "status":{"message":"init"},
+                  "job":{"res_id":61,"res_name":"LED Strip","action":"read"}
+                  
+                }</textarea>
+                <input type="text" id="url" name="url" placeholder="URL" value="/rpc/on_request">
                 <button id="send" class="button1" name="send">SEND</button><br><br>
                 <textarea name="res" id="res" placeholder="response"></textarea>
 

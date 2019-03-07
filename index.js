@@ -186,7 +186,7 @@ GPIO.set_mode(5,GPIO.MODE_OUTPUT);
 let perform_job=function(job)
 {
 
-  let res={message:"Job completed on "+DEVICE_NAME,val:10};
+  let res={message:"Job completed on "+DEVICE_NAME,val:(9000+job.res_id)};
     if(job.res_id===1001)
     { 
         let status="on";
@@ -463,8 +463,21 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
 
 
 
-GPIO.set_button_handler(1, GPIO.PULL_UP, GPIO.INT_EDGE_NEG, 200, function(x) {
-     print('Button press, pin: ', x);
+GPIO.set_button_handler(0, GPIO.PULL_UP, GPIO.INT_EDGE_NEG, 200, function(x) {
+      
+      print(DEVICE_NAME,"->",'Requesting Resource');
+      let req={
+        req_id:JSON.stringify(Timer.now()),
+        src_ip:"0.0.0.0",
+        status:{"message":"init"},
+        job:{"res_id":1001,"res_name":"LED Strip","action":led_on?"turn_off":"turn_on"}
+      };
+      led_on=!led_on;
+      RPC.call(RPC.LOCAL, 'on_request', req, function (resp, ud) {
+        print('Response:', JSON.stringify(resp));
+      }, null);
+
+
    }, null);
 
 

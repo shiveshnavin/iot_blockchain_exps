@@ -29,6 +29,8 @@ app.use (function(req, res, next) {
       next();
   });
 });
+ 
+
 app.use(express.static(path.join(__dirname,'public')))
 
 setTimeout(function(){

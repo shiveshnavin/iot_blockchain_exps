@@ -156,8 +156,13 @@ module.exports=(fun)=>{
     else if(fun==="void getInfo()")
     {
         return function(){
+            var hostNo=JSON.parse(curPort);
+            if(hostNo>=5000)
+            {
+                hostNo=hostNo-Cfg.BASE_PORT;
+            }
             return {
-                hostNo:curPort,
+                hostNo:hostNo,
                 hostIp:"127.0.0.1:"+curPort
             };
         };
