@@ -72,7 +72,7 @@ $('document').ready(function() {
                 var id=  jQuery(this).prop('id')
                 var val= jQuery(this).prop('checked') ? 1:0; 
                 var pin=id.replace('io_','');
-                console.log(' ',id,"  ",val,"  ",pin ,"  <--");
+               // console.log(' ',id,"  ",val,"  ",pin ,"  <--");
                 
                  
                socket.emit('input',''+actualPin.indexOf(JSON.parse(pin))+'-'+JSON.parse(val));
@@ -81,15 +81,14 @@ $('document').ready(function() {
             });
             $('#io_'+rr).click(function(){
                
+              
                 var id=  jQuery(this).prop('id')
                 var val= jQuery(this).prop('checked') ? 1:0; 
-                var pin=id.replace('pin','');
+                var pin=id.replace('io_','');
                 console.log(' ',id,"  ",val,"  ",pin ,"  <--");
                 
-                socket.emit('input',{
-                    gpio:actualPin.indexOf(pin),
-                    val:val
-                });
+                 
+               socket.emit('input',''+actualPin.indexOf(JSON.parse(pin))+'-'+JSON.parse(val));
 
             });
             

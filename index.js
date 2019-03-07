@@ -463,7 +463,9 @@ Event.addGroupHandler(Net.EVENT_GRP, function(ev, evdata, arg) {
 
 
 
-
+GPIO.set_button_handler(1, GPIO.PULL_UP, GPIO.INT_EDGE_NEG, 200, function(x) {
+     print('Button press, pin: ', x);
+   }, null);
 
 
 

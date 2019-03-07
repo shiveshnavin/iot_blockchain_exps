@@ -7,6 +7,7 @@ var GPIO=module.exports={
     MODE_INPUT:0,
     MODE_OUTPUT:1,
     connections:[],
+    interruptHandlers:[],
     initGPIO:function(express_app)
     {
         app=express_app 
@@ -19,14 +20,17 @@ var GPIO=module.exports={
             console.log(' %s sockets is connected', GPIO.connections.length);
         GPIO.emitPin()
             socket.on('input',(input)=>{
-              console.log( (input))
+              //console.log( (input))
                 try{
      
                     var inp= input.split('-') 
-                    GPIO.write_pin(JSON.parse(inp[0]),JSON.parse(inp[1]))
+                    var pin=JSON.parse(inp[0]);
+                    var val=JSON.parse(inp[1]);
+                    GPIO.write_pin(pin,val)
                     
-                    console.log(GPIO.read_pins())
+                   // console.log(GPIO.read_pins())
                     GPIO.emitPin()
+                    GPIO.sendInterrupt(pin,val);
                 }catch(e)
                 {
                    // console.log(e)
@@ -103,9 +107,33 @@ var GPIO=module.exports={
         
         GPIO.pins=GPIO.read_pins()
         return GPIO.pins[pin]
-    }
+    },
+    sendInterrupt:function(pin,val)
+    {
+        if(GPIO.interruptHandlers[pin]!==undefined)
+        {
+            GPIO.interruptHandlers[pin](pin)
+        }
+    },
+    set_button_handler:function(pin, pull, intmode, period, handler){
 
 
+        GPIO.interruptHandlers[pin]=handler
+
+    },
+    INT_NONE: 0,
+    INT_EDGE_POS: 1,
+    INT_EDGE_NEG: 2,
+    INT_EDGE_ANY: 3,
+    INT_LEVEL_HI: 4,
+    INT_LEVEL_LO: 5, 
+    set_pull: function(pin,mode){},
+    PULL_NONE: 0,
+    PULL_UP: 1,
+    PULL_DOWN: 2, 
+    setup_input:function(pin,mode){} ,  
+    enable_int: function(en){} , 
+    disable_int:function(en){} , 
 } 
  
  
