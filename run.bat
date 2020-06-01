@@ -2,6 +2,7 @@ title ESP Emulator
 @echo off
 set /p var=Open ESP emulator GUI as well ?[Y/N]: 
 if %var%== Y goto YES
+if %var%== y goto YES
 if not %var%== Y goto NO 
 :YES
 start http://127.0.0.1:5000 
