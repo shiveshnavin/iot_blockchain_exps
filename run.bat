@@ -11,10 +11,10 @@ start http://127.0.0.1:5002
 start http://127.0.0.1:5003  
 start http://127.0.0.1:5004 
 :NO
-start cmd /k "node index.js 0"
-start cmd /k "node index.js 1"
-start cmd /k "node index.js 2"
-start cmd /k "node index.js 3"
-start cmd /k "node index.js 4"
+start cmd /k "node init.js 0"
+start cmd /k "node init.js 1"
+start cmd /k "node init.js 2"
+start cmd /k "node init.js 3"
+start cmd /k "node init.js 4"
 
 

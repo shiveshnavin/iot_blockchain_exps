@@ -10,7 +10,13 @@ var GPIO=require('./api_gpio.js')
 var Timer=require('./api_timer.js')
 
 var curIp="127.0.0.1",curPort="5001";
-var DEVICE_NO=JSON.parse(process.argv.splice(2)[0])
+var DEVICE_NO = 0;
+try{
+    DEVICE_NO=JSON.parse(process.argv.splice(2)[0])
+}
+catch(e){
+    console.warn('Missing device number. Use a integer as 3rd argument. e.g. node init.js 1001')
+}
 Cfg.DEVICE_NO=DEVICE_NO;
 
 if(DEVICE_NO>=Cfg.MAX_NODES)
