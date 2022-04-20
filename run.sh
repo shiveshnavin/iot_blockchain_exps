@@ -1,8 +1,8 @@
-gnome-terminal -e "node index.js 0"
-gnome-terminal -e "node index.js 1"
-gnome-terminal -e "node index.js 2"
-gnome-terminal -e "node index.js 3"
-gnome-terminal -e "node index.js 4"
+gnome-terminal -e "node bootloader.js 0"
+gnome-terminal -e "node bootloader.js 1"
+gnome-terminal -e "node bootloader.js 2"
+gnome-terminal -e "node bootloader.js 3"
+gnome-terminal -e "node bootloader.js 4"
 
 read -p "Open ESP emulator GUI as well ? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
 
