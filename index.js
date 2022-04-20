@@ -1,10 +1,16 @@
+var pathl = require('path');
 
 function load(path) {
     try {
         return require('./' + path)
     }
     catch (e) {
-        return require('./emu_mjs/' + path)
+        try {
+            return require('./emu_mjs/' + path)
+        }
+        catch (e) {
+            return require(pathl.normalize(__dirname +  '/emu_mjs/' + path));
+        }
     }
 }
 function gc() {

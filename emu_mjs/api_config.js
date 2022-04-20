@@ -1,7 +1,7 @@
 var fs = require('fs');
 var _ = require('lodash');
 
-var config0Data = fs.readFileSync('./emu_mjs/conf0.json');
+var config0Data = fs.readFileSync(__dirname +'/conf0.json');
 
 if (fs.existsSync('./conf9.json')) {
     config0Data = fs.readFileSync('./conf9.json');
