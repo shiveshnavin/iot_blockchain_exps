@@ -1,10 +1,10 @@
 {
-  "name": "iot_blockchain_exps",
-  "version": "1.0.0",
-  "description": "test project",
+  "name": "mongoose-os-emulator",
+  "version": "1.0.1",
+  "description": "The project aims to support mongoose os mjs emulation on PC.",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js 5000"
+    "test": "node test.js 5000"
   },
   "repository": {
     "type": "git",
