@@ -37,7 +37,7 @@ To run on Linux
 To make a request 
 
 run ota_server and send postman or from GUI request 
-```json
+```code
 
 http://127.0.0.1:5001/rpc/on_request
 
@@ -61,7 +61,7 @@ http://127.0.0.1:5001/rpc/on_request
 Currently only these libraries are supported with limited scope. Feel free to add more features and raise a PR.
 
 ```js
- 	this.Sys = load('api_sys.js');
+    this.Sys = load('api_sys.js');
     this.HTTP = load('api_http.js');
     this.RPC = load('api_rpc.js');
     this.Cfg = load('api_config.js');
