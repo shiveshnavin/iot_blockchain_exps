@@ -1,6 +1,6 @@
 {
   "name": "mongoose-os-emulator",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "The project aims to support mongoose os mjs emulation on PC.",
   "main": "index.js",
   "scripts": {

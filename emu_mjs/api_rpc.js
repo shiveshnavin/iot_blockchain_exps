@@ -61,7 +61,7 @@ setTimeout(function(){
  
      app.all(path,function(req,res)
     {
-      res.send(callback(JSON.parse(req.body)))
+      res.send(JSON.stringify(callback(JSON.parse(req.body))))
     })
     
 

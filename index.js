@@ -37,12 +37,13 @@ let print = function () {
 
 
 module.exports = function () {
+    //require('./emu_mjs/
     this.gc = gc;
     this.load = load;
     this.print = print;
     this.Sys = load('api_sys.js');
     this.HTTP = load('api_http.js');
-    this.RPC = load('api_rpc.js');
+    this.RPC = require('./emu_mjs/api_rpc.js');
     this.Cfg = load('api_config.js');
     this.ffi = load('api_ffi.js');
     this.Event = load('api_events.js');
@@ -51,4 +52,5 @@ module.exports = function () {
     this.GPIO = ffi('gpio')
     this.Timer = load('api_timer.js');
     this.UART = load('api_uart.js');
+    this.ADC = load('api_adc.js');
 }
