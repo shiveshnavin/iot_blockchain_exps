@@ -11,10 +11,10 @@ start http://127.0.0.1:5002
 start http://127.0.0.1:5003  
 start http://127.0.0.1:5004 
 :NO
-start cmd /k "node bootloader.js 0"
-start cmd /k "node bootloader.js 1"
-start cmd /k "node bootloader.js 2"
-start cmd /k "node bootloader.js 3"
-start cmd /k "node bootloader.js 4"
+start cmd /k "node init.js 0"
+start cmd /k "node init.js 1"
+start cmd /k "node init.js 2"
+start cmd /k "node init.js 3"
+start cmd /k "node init.js 4"
 
 

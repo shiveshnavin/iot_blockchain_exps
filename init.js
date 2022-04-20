@@ -1,7 +1,4 @@
-
-
- 
-
+require('./bootloader.js')();
 
 let DEVICE_NO=Cfg.DEVICE_NO; ;//DEVICE_NAME.slice(7, 8); 
 if(DEVICE_NO===undefined)
